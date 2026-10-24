@@ -1,16 +1,32 @@
 import "./style.css"
-import { getJSON } from "./api.js"
+import { CITIES, getCityForecast } from "./api.js"
 
-const url =
-    "https://api.open-meteo.com/v1/forecast?latitude=-1.9441&longitude=30.0619&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Africa%2FKigali"
+const state = {
+    items: [],
+    status: "loading", // "loading" | "success" | "error"
+    error: null,
+    query: "",
+    filter: "all",
+    sort: "default",
+}
 
-async function test() {
+async function load() {
+    state.status = "loading"
+    render()
     try {
-        const data = await getJSON(url)
-        console.log(data)
+        const data = await getCityForecast(CITIES[0])
+        state.items = [{ ...CITIES[0], daily: data.daily }]
+        state.status = "success"
     } catch (err) {
-        console.error("Failed:", err.message)
+        state.status = "error"
+        state.error = err.message
+    } finally {
+        render()
     }
 }
 
-test()
+function render() {
+    console.log("render:", state.status, state)
+}
+
+load()
