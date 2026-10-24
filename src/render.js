@@ -16,8 +16,10 @@ const skeletonCard = () => `
 
 const card = ({ name, province, days }) => {
     const { max, min, rain } = days?.[0] ?? {}
+    const label = `${name}, ${province}. High ${max ?? "unknown"} degrees, low ${min ?? "unknown"} degrees, rain ${rain ?? 0} millimetres. Open 7-day forecast.`
     return `
-    <button type="button" data-city="${escapeHTML(name)}"
+    <button type="button" data-city="${escapeHTML(name)}" aria-haspopup="dialog"
+      aria-label="${escapeHTML(label)}"
       class="rounded-xl bg-white p-4 text-left shadow transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
       <h2 class="text-lg font-semibold">${escapeHTML(name)}</h2>
       <p class="text-sm text-slate-500">${escapeHTML(province)}</p>

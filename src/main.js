@@ -1,7 +1,7 @@
 import "./style.css"
 import { CITIES, getAllForecasts, getCityForecast } from "./api.js"
 import { render } from "./render.js"
-import { toForecastDays } from "./utils.js"
+import { debounce, toForecastDays } from "./utils.js"
 
 const idleDetail = { status: "idle", city: null, days: [], error: null }
 
@@ -56,13 +56,19 @@ async function openDetails(name) {
 }
 
 function closeDetails() {
+    const name = state.detail.city?.name
     state.detail = idleDetail
     render(state)
+    if (name) document.querySelector(`[data-city="${CSS.escape(name)}"]`)?.focus()
 }
 
-document.querySelector("#search").addEventListener("input", (event) => {
-    state.query = event.target.value
+const applySearch = debounce((value) => {
+    state.query = value
     render(state)
+}, 300)
+
+document.querySelector("#search").addEventListener("input", (event) => {
+    applySearch(event.target.value)
 })
 
 document.querySelector("#filter").addEventListener("change", (event) => {

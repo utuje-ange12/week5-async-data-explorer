@@ -40,3 +40,11 @@ export function getStats(items) {
     const totalRain = items.reduce((sum, city) => sum + (firstDay(city).rain ?? 0), 0)
     return { count, avgMax: count ? totalMax / count : null, totalRain }
 }
+
+export const debounce = (fn, delay = 300) => {
+    let timer
+    return (...args) => {
+        clearTimeout(timer)
+        timer = setTimeout(() => fn(...args), delay)
+    }
+}
