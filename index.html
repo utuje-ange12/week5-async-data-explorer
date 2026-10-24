@@ -11,6 +11,29 @@
   <p class="text-slate-600">7-day forecast for Rwandan cities</p>
 </header>
 <main class="mx-auto max-w-6xl px-6 pb-12">
+  <section class="mb-4 grid gap-3 sm:grid-cols-3">
+    <div>
+      <label for="search" class="mb-1 block text-sm font-medium">Search city</label>
+      <input id="search" type="search" placeholder="e.g. Kigali"
+             class="w-full rounded border border-slate-300 bg-white px-3 py-2" />
+    </div>
+    <div>
+      <label for="filter" class="mb-1 block text-sm font-medium">Province</label>
+      <select id="filter" class="w-full rounded border border-slate-300 bg-white px-3 py-2">
+        <option value="all">All provinces</option>
+      </select>
+    </div>
+    <div>
+      <label for="sort" class="mb-1 block text-sm font-medium">Sort by</label>
+      <select id="sort" class="w-full rounded border border-slate-300 bg-white px-3 py-2">
+        <option value="default">Default order</option>
+        <option value="name">Name A to Z</option>
+        <option value="hottest">Hottest first</option>
+        <option value="rainiest">Rainiest first</option>
+      </select>
+    </div>
+  </section>
+  <div id="stats" class="mb-4 grid gap-3 sm:grid-cols-3"></div>
   <p id="status" aria-live="polite" class="mb-4 text-sm text-slate-600"></p>
   <div id="app"></div>
 </main>

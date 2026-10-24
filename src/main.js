@@ -34,6 +34,21 @@ async function load() {
     }
 }
 
+document.querySelector("#search").addEventListener("input", (event) => {
+    state.query = event.target.value
+    render(state)
+})
+
+document.querySelector("#filter").addEventListener("change", (event) => {
+    state.filter = event.target.value
+    render(state)
+})
+
+document.querySelector("#sort").addEventListener("change", (event) => {
+    state.sort = event.target.value
+    render(state)
+})
+
 document.querySelector("#app").addEventListener("click", (event) => {
     if (event.target.closest('[data-action="retry"]')) load()
 })
