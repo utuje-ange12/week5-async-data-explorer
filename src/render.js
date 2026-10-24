@@ -10,6 +10,19 @@ const skeletonCard = () => `
     <div class="mt-2 h-4 w-2/3 rounded bg-slate-200"></div>
   </div>`
 
+const card = ({ name, province, days }) => {
+    const { max, min, rain } = days?.[0] ?? {}
+    return `
+    <button type="button" data-city="${escapeHTML(name)}"
+      class="rounded-xl bg-white p-4 text-left shadow transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
+      <h2 class="text-lg font-semibold">${escapeHTML(name)}</h2>
+      <p class="text-sm text-slate-500">${escapeHTML(province)}</p>
+      <p class="mt-3 text-2xl font-bold text-emerald-600">${escapeHTML(max ?? "--")}°C</p>
+      <p class="text-sm text-slate-600">Low ${escapeHTML(min ?? "--")}°C</p>
+      <p class="text-sm text-slate-600">Rain ${escapeHTML(rain ?? 0)} mm</p>
+    </button>`
+}
+
 export function render(state) {
     if (state.status === "loading") {
         statusEl.textContent = "Loading forecasts..."
@@ -34,5 +47,5 @@ export function render(state) {
     }
 
     statusEl.textContent = `Showing ${state.items.length} cities`
-    app.innerHTML = `<ul>${state.items.map(({ name }) => `<li>${escapeHTML(name)}</li>`).join("")}</ul>`
+    app.innerHTML = `<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">${state.items.map(card).join("")}</div>`
 }

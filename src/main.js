@@ -1,6 +1,7 @@
 import "./style.css"
 import { CITIES, getCityForecast } from "./api.js"
 import { render } from "./render.js"
+import { toForecastDays } from "./utils.js"
 
 const state = {
     items: [],
@@ -16,7 +17,7 @@ async function load() {
     render(state)
     try {
         const data = await getCityForecast(CITIES[0])
-        state.items = [{ ...CITIES[0], daily: data.daily }]
+        state.items = [{ ...CITIES[0], days: toForecastDays(data.daily) }]
         state.status = "success"
     } catch (err) {
         state.status = "error"
