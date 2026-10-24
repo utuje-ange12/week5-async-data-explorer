@@ -1,9 +1,10 @@
 import "./style.css"
 import { CITIES, getCityForecast } from "./api.js"
+import { render } from "./render.js"
 
 const state = {
     items: [],
-    status: "loading", // "loading" | "success" | "error"
+    status: "loading",
     error: null,
     query: "",
     filter: "all",
@@ -12,7 +13,7 @@ const state = {
 
 async function load() {
     state.status = "loading"
-    render()
+    render(state)
     try {
         const data = await getCityForecast(CITIES[0])
         state.items = [{ ...CITIES[0], daily: data.daily }]
@@ -21,12 +22,12 @@ async function load() {
         state.status = "error"
         state.error = err.message
     } finally {
-        render()
+        render(state)
     }
 }
 
-function render() {
-    console.log("render:", state.status, state)
-}
+document.querySelector("#app").addEventListener("click", (event) => {
+    if (event.target.closest('[data-action="retry"]')) load()
+})
 
 load()

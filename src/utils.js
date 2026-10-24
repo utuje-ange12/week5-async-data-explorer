@@ -1,0 +1,3 @@
+export const escapeHTML = (str) =>
+    String(str).replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c])

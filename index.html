@@ -6,7 +6,14 @@
   <title>Rwanda Weather Explorer</title>
 </head>
 <body class="bg-slate-50 text-slate-900">
-<h1 class="p-6 text-3xl font-bold text-emerald-600">Rwanda Weather Explorer</h1>
+<header class="mx-auto max-w-6xl p-6">
+  <h1 class="text-3xl font-bold text-emerald-600">Rwanda Weather Explorer</h1>
+  <p class="text-slate-600">7-day forecast for Rwandan cities</p>
+</header>
+<main class="mx-auto max-w-6xl px-6 pb-12">
+  <p id="status" aria-live="polite" class="mb-4 text-sm text-slate-600"></p>
+  <div id="app"></div>
+</main>
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>
