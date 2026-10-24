@@ -1,7 +1,9 @@
 import "./style.css"
-import { CITIES, getAllForecasts } from "./api.js"
+import { CITIES, getAllForecasts, getCityForecast } from "./api.js"
 import { render } from "./render.js"
 import { toForecastDays } from "./utils.js"
+
+const idleDetail = { status: "idle", city: null, days: [], error: null }
 
 const state = {
     items: [],
@@ -11,6 +13,7 @@ const state = {
     query: "",
     filter: "all",
     sort: "default",
+    detail: idleDetail,
 }
 
 async function load() {
@@ -34,6 +37,29 @@ async function load() {
     }
 }
 
+async function openDetails(name) {
+    const city = state.items.find((item) => item.name === name)
+    if (!city) return
+
+    state.detail = { status: "loading", city, days: [], error: null }
+    render(state)
+
+    try {
+        const data = await getCityForecast(city)
+        if (state.detail.city !== city) return
+        state.detail = { ...state.detail, status: "success", days: toForecastDays(data.daily) }
+    } catch (err) {
+        if (state.detail.city !== city) return
+        state.detail = { ...state.detail, status: "error", error: err.message }
+    }
+    render(state)
+}
+
+function closeDetails() {
+    state.detail = idleDetail
+    render(state)
+}
+
 document.querySelector("#search").addEventListener("input", (event) => {
     state.query = event.target.value
     render(state)
@@ -51,6 +77,20 @@ document.querySelector("#sort").addEventListener("change", (event) => {
 
 document.querySelector("#app").addEventListener("click", (event) => {
     if (event.target.closest('[data-action="retry"]')) load()
+    const cityButton = event.target.closest("[data-city]")
+    if (cityButton) openDetails(cityButton.dataset.city)
+})
+
+const dialog = document.querySelector("#details")
+
+dialog.addEventListener("click", (event) => {
+    if (event.target === dialog || event.target.closest('[data-action="close-details"]')) {
+        closeDetails()
+    }
+})
+
+dialog.addEventListener("close", () => {
+    if (state.detail.status !== "idle") closeDetails()
 })
 
 load()

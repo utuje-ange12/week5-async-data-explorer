@@ -4,6 +4,8 @@ const app = document.querySelector("#app")
 const statusEl = document.querySelector("#status")
 const statsEl = document.querySelector("#stats")
 const filterEl = document.querySelector("#filter")
+const dialog = document.querySelector("#details")
+const dialogBody = document.querySelector("#details-body")
 
 const skeletonCard = () => `
   <div class="animate-pulse rounded-xl bg-white p-4 shadow">
@@ -31,6 +33,63 @@ const statCard = (label, value) => `
     <p class="text-2xl font-bold">${escapeHTML(value)}</p>
   </div>`
 
+const formatDate = (date) =>
+    new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+    })
+
+const dayRow = ({ date, max, min, rain }) => `
+  <tr class="border-t border-slate-200">
+    <td class="py-2 pr-2">${escapeHTML(formatDate(date))}</td>
+    <td class="py-2 pr-2 font-medium text-emerald-700">${escapeHTML(max ?? "--")}°C</td>
+    <td class="py-2 pr-2">${escapeHTML(min ?? "--")}°C</td>
+    <td class="py-2">${escapeHTML(rain ?? 0)} mm</td>
+  </tr>`
+
+function renderDetails({ detail }) {
+    if (detail.status === "idle") {
+        if (dialog.open) dialog.close()
+        return
+    }
+
+    const { city, status, days, error } = detail
+    let content = ""
+
+    if (status === "loading") {
+        content = `
+      <div class="animate-pulse space-y-3">
+        <div class="h-4 w-full rounded bg-slate-200"></div>
+        <div class="h-4 w-5/6 rounded bg-slate-200"></div>
+        <div class="h-4 w-2/3 rounded bg-slate-200"></div>
+      </div>`
+    } else if (status === "error") {
+        content = `<p class="rounded bg-red-50 p-4 text-red-700">Could not load the forecast. (${escapeHTML(error)})</p>`
+    } else {
+        content = `
+      <table class="w-full text-left text-sm">
+        <thead class="text-slate-500">
+          <tr><th class="pb-2 font-medium">Day</th><th class="pb-2 font-medium">High</th><th class="pb-2 font-medium">Low</th><th class="pb-2 font-medium">Rain</th></tr>
+        </thead>
+        <tbody>${days.map(dayRow).join("")}</tbody>
+      </table>`
+    }
+
+    dialogBody.innerHTML = `
+    <div class="mb-4 flex items-start justify-between gap-4">
+      <div>
+        <h2 id="details-title" class="text-xl font-bold">${escapeHTML(city.name)}</h2>
+        <p class="text-sm text-slate-500">${escapeHTML(city.province)} province, 7-day forecast</p>
+      </div>
+      <button type="button" data-action="close-details" aria-label="Close details"
+        class="rounded bg-slate-100 px-3 py-1 text-slate-700 hover:bg-slate-200">Close</button>
+    </div>
+    ${content}`
+
+    if (!dialog.open) dialog.showModal()
+}
+
 function renderFilterOptions(state) {
     const options = getProvinces(state.items)
         .map((p) => `<option value="${escapeHTML(p)}">${escapeHTML(p)}</option>`)
@@ -40,6 +99,8 @@ function renderFilterOptions(state) {
 }
 
 export function render(state) {
+    renderDetails(state)
+
     if (state.status === "loading") {
         statsEl.innerHTML = ""
         statusEl.textContent = "Loading forecasts..."
