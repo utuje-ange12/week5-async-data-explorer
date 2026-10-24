@@ -46,6 +46,7 @@ export function render(state) {
         return
     }
 
-    statusEl.textContent = `Showing ${state.items.length} cities`
+    const failedNote = state.failed.length ? ` (${state.failed.join(", ")} could not load)` : ""
+    statusEl.textContent = `Showing ${state.items.length} cities${failedNote}`
     app.innerHTML = `<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">${state.items.map(card).join("")}</div>`
 }

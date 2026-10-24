@@ -1,10 +1,11 @@
 import "./style.css"
-import { CITIES, getCityForecast } from "./api.js"
+import { CITIES, getAllForecasts } from "./api.js"
 import { render } from "./render.js"
 import { toForecastDays } from "./utils.js"
 
 const state = {
     items: [],
+    failed: [],
     status: "loading",
     error: null,
     query: "",
@@ -14,10 +15,16 @@ const state = {
 
 async function load() {
     state.status = "loading"
+    state.failed = []
     render(state)
     try {
-        const data = await getCityForecast(CITIES[0])
-        state.items = [{ ...CITIES[0], days: toForecastDays(data.daily) }]
+        const { loaded, failed } = await getAllForecasts(CITIES)
+        if (loaded.length === 0) throw new Error("All requests failed")
+        state.items = loaded.map(({ daily, ...city }) => ({
+            ...city,
+            days: toForecastDays(daily),
+        }))
+        state.failed = failed
         state.status = "success"
     } catch (err) {
         state.status = "error"

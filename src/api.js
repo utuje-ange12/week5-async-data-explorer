@@ -4,7 +4,9 @@ export async function getJSON(url) {
         throw new Error(`Request failed (${response.status})`)
     }
     return response.json()
-}export const CITIES = [
+}
+
+export const CITIES = [
     { name: "Kigali", province: "Kigali City", lat: -1.9441, lon: 30.0619 },
     { name: "Huye", province: "Southern", lat: -2.5967, lon: 29.7394 },
     { name: "Muhanga", province: "Southern", lat: -2.0847, lon: 29.7567 },
@@ -20,3 +22,17 @@ export const buildForecastUrl = ({ lat, lon }) =>
     `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Africa%2FKigali`
 
 export const getCityForecast = (city) => getJSON(buildForecastUrl(city))
+
+export async function getAllForecasts(cities) {
+    const results = await Promise.allSettled(cities.map((city) => getCityForecast(city)))
+    const loaded = []
+    const failed = []
+    results.forEach((outcome, i) => {
+        if (outcome.status === "fulfilled") {
+            loaded.push({ ...cities[i], daily: outcome.value.daily })
+        } else {
+            failed.push(cities[i].name)
+        }
+    })
+    return { loaded, failed }
+}
