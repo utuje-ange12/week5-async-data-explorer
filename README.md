@@ -2,11 +2,11 @@
 
 A single-page app that loads a 7-day forecast for eight Rwandan cities and lets you search, filter, sort and open details for each city.
 
-- **Author:** [Your full name]
-- **Course:** Advanced Frontend Web Development, Week 5
-- **API:** Open-Meteo Forecast API, docs at https://open-meteo.com/en/docs
-- **Live app:** [paste your Vercel link]
-- **Video demo:** [paste your video link]
+Author: [UTUJE Ange Fidele]
+Course:Advanced Frontend Web Development, Week 5
+API:Open-Meteo Forecast API, docs at https://open-meteo.com/en/docs
+Live app: [https://week5-async-data-explorer-gamma.vercel.app]
+
 
 ## Features
 
